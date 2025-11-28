@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'Inter', sans-serif;
+  @apply bg-slate-50 text-slate-800 antialiased;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+/* Premium Card */
+.card {
+  @apply bg-white rounded-2xl shadow-soft p-8 border border-white/20 backdrop-blur-sm transition-all duration-300;
+}
+
+.card:hover {
+  @apply shadow-lg transform -translate-y-1;
+}
+
+/* Premium Buttons */
+.btn-primary {
+  @apply inline-flex items-center justify-center bg-primary text-white font-semibold py-2.5 px-6 rounded-xl hover:bg-primary-dark shadow-md hover:shadow-lg transition-all duration-200 active:scale-95 gap-2;
+}
+
+.btn-secondary {
+  @apply inline-flex items-center justify-center bg-white text-primary font-semibold py-2.5 px-6 rounded-xl border border-primary hover:bg-accent shadow-sm transition-all duration-200 gap-2;
+}
+
+.btn-danger {
+  @apply inline-flex items-center justify-center bg-danger text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-600 shadow-sm transition-all duration-200 gap-2;
+}
+
+.btn-sm {
+  @apply px-3 py-1.5 text-xs rounded-lg font-medium shadow-none hover:shadow-sm;
+}
+
+.btn-edit {
+  @apply bg-teal-50 text-teal-700 hover:bg-teal-100;
+}
+
+.btn-delete {
+  @apply bg-red-50 text-red-700 hover:bg-red-100;
+}
+
+/* Form Elements */
+.input-group {
+  @apply relative mb-6;
+}
+
+.input-field {
+  @apply w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all duration-200 text-slate-700 placeholder-slate-400;
+}
+
+.input-label {
+  @apply block text-sm font-medium text-slate-600 mb-1 ml-1;
+}
+
+/* Sidebar & Layout */
+.sidebar-link {
+  @apply flex items-center px-6 py-3 text-slate-600 hover:bg-accent-light hover:text-primary transition-colors duration-200 border-l-4 border-transparent hover:border-primary font-medium;
+}
+
+.sidebar-link.active {
+  @apply bg-accent-light text-primary border-primary;
+}

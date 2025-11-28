@@ -1,0 +1,60 @@
+<div class="min-h-screen flex bg-white">
+  <!-- Left Side: Hero Image -->
+  <div class="hidden lg:block w-1/2 relative overflow-hidden">
+    <img src="assets/images/hero.png" alt="Hospital Lobby" class="absolute inset-0 w-full h-full object-cover">
+    <div class="absolute inset-0 bg-gradient-to-r from-primary-dark/80 to-primary/60 mix-blend-multiply"></div>
+    <div class="absolute bottom-0 left-0 p-12 text-white">
+      <h1 class="text-4xl font-bold mb-4">Welcome to Mediconnect</h1>
+      <p class="text-lg opacity-90">Advanced Digital Healthcare Management System.</p>
+    </div>
+  </div>
+
+  <!-- Right Side: Login Form -->
+  <div class="w-full lg:w-1/2 flex items-center justify-center p-8 bg-slate-50">
+    <div class="w-full max-w-md space-y-8 animate-fade-in">
+
+      <div class="text-center">
+        <h2 class="text-3xl font-extrabold text-slate-800">Sign In</h2>
+        <p class="mt-2 text-sm text-slate-600">
+          Access your personalized dashboard.
+        </p>
+      </div>
+
+      <div *ngIf="errorMessage" class="bg-red-50 border-l-4 border-danger text-danger p-4 rounded shadow-sm text-sm">
+        {{ errorMessage }}
+      </div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="mt-8 space-y-6">
+
+        <div class="input-group">
+          <label for="email" class="input-label">Email Address</label>
+          <input id="email" formControlName="email" type="email" required placeholder="doctor@hospital.com"
+            class="input-field">
+        </div>
+
+        <div class="input-group">
+          <label for="password" class="input-label">Password</label>
+          <input id="password" formControlName="password" type="password" required placeholder="••••••••"
+            class="input-field">
+        </div>
+
+        <div class="flex items-center justify-between text-sm">
+          <div class="flex items-center">
+            <input id="remember-me" type="checkbox"
+              class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
+            <label for="remember-me" class="ml-2 block text-slate-600">Remember me</label>
+          </div>
+          <a href="#" class="font-medium text-primary hover:text-primary-dark">Forgot password?</a>
+        </div>
+
+        <button type="submit" [disabled]="loginForm.invalid" class="w-full btn-primary flex justify-center py-3">
+          Access Portal
+        </button>
+
+        <p class="text-center text-sm text-slate-600 mt-4">
+          Contact administrator to obtain access.
+        </p>
+      </form>
+    </div>
+  </div>
+</div>

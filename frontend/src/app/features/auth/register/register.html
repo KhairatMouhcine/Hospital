@@ -1,0 +1,58 @@
+<div class="min-h-screen flex bg-white">
+    <!-- Left Side: Hero Image -->
+    <div class="hidden lg:block w-1/2 relative overflow-hidden order-last">
+        <img src="assets/images/hero.png" alt="Hospital Lobby"
+            class="absolute inset-0 w-full h-full object-cover transform scale-x-[-1]">
+        <div class="absolute inset-0 bg-gradient-to-l from-secondary-dark/80 to-secondary/60 mix-blend-multiply"></div>
+        <div class="absolute bottom-0 right-0 p-12 text-white text-right">
+            <h1 class="text-4xl font-bold mb-4">Join Mediconnect</h1>
+            <p class="text-lg opacity-90">Start your journey to better health management.</p>
+        </div>
+    </div>
+
+    <!-- Right Side: Register Form -->
+    <div class="w-full lg:w-1/2 flex items-center justify-center p-8 bg-slate-50">
+        <div class="w-full max-w-md space-y-8 animate-fade-in">
+
+            <div class="text-center">
+                <h2 class="text-3xl font-extrabold text-slate-800">Create Account</h2>
+                <p class="mt-2 text-sm text-slate-600">
+                    Or <a routerLink="/login"
+                        class="font-medium text-primary hover:text-primary-dark transition-colors">sign in to existing
+                        account</a>
+                </p>
+            </div>
+
+            <div *ngIf="errorMessage"
+                class="bg-red-50 border-l-4 border-danger text-danger p-4 rounded shadow-sm text-sm">
+                {{ errorMessage }}
+            </div>
+
+            <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="mt-8 space-y-5">
+
+                <div class="input-group">
+                    <label class="input-label">Full Name</label>
+                    <input formControlName="fullName" type="text" class="input-field" placeholder="John Doe">
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">Email Address</label>
+                    <input formControlName="email" type="email" class="input-field" placeholder="john@example.com">
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">Password</label>
+                    <input formControlName="password" type="password" class="input-field" placeholder="••••••••">
+                </div>
+
+
+
+                <button type="submit" [disabled]="registerForm.invalid || isSubmitting"
+                    class="w-full btn-primary flex justify-center py-3 bg-secondary hover:bg-secondary-dark disabled:opacity-50 disabled:cursor-not-allowed">
+                    <span *ngIf="!isSubmitting">Create Account</span>
+                    <span *ngIf="isSubmitting">Creating...</span>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
