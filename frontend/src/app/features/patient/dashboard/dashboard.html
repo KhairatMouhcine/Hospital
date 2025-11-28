@@ -1,0 +1,184 @@
+<div class="flex h-screen bg-slate-50 overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white border-r border-slate-200 hidden md:flex flex-col">
+        <div class="h-16 flex items-center px-6 border-b border-slate-200">
+            <div class="flex items-center gap-2 text-secondary font-bold text-xl">
+                Mediconnect
+            </div>
+        </div>
+
+        <div class="flex-1 py-6 px-3 space-y-1">
+            <button (click)="activeTab = 'home'" [class.active]="activeTab === 'home'"
+                class="w-full sidebar-link rounded-lg group">
+                <span class="mr-3">🏠</span> Dashboard
+            </button>
+            <button (click)="activeTab = 'book'" [class.active]="activeTab === 'book'"
+                class="w-full sidebar-link rounded-lg group">
+                <span class="mr-3">📅</span> Book Appointment
+            </button>
+            <button (click)="activeTab = 'rdvs'" [class.active]="activeTab === 'rdvs'"
+                class="w-full sidebar-link rounded-lg group">
+                <span class="mr-3">📋</span> My History
+            </button>
+            <button (click)="activeTab = 'factures'" [class.active]="activeTab === 'factures'"
+                class="w-full sidebar-link rounded-lg group">
+                <span class="mr-3">💵</span> My Invoices
+            </button>
+        </div>
+
+        <div class="p-4 border-t border-slate-200">
+            <button (click)="logout()"
+                class="flex items-center w-full px-4 py-2 text-sm font-medium text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition">
+                <span class="mr-2">🚪</span> Sign Out
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden">
+        <!-- Header -->
+        <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8">
+            <h2 class="text-xl font-semibold text-slate-800">
+                Portal
+            </h2>
+            <div class="flex items-center gap-4">
+                <button (click)="editProfile()" class="text-sm text-secondary font-medium hover:underline">Edit
+                    Profile</button>
+                <div class="text-right hidden sm:block" *ngIf="profile">
+                    <p class="text-sm font-medium text-slate-900">Patient User</p>
+                    <p class="text-xs text-slate-500">Patient ID: #{{ profile.id }}</p>
+                </div>
+                <div
+                    class="w-10 h-10 rounded-full bg-secondary-light/30 flex items-center justify-center text-secondary-dark font-bold border-2 border-white shadow-sm">
+                    P
+                </div>
+            </div>
+        </header>
+
+        <!-- Content -->
+        <div class="flex-1 overflow-y-auto p-8 relative">
+
+            <!-- Home Tab -->
+            <div *ngIf="activeTab === 'home'" class="space-y-6 animate-fade-in">
+                <!-- Welcome Banner -->
+                <div
+                    class="bg-gradient-to-r from-teal-500 to-emerald-500 rounded-2xl p-8 text-white shadow-lg relative overflow-hidden">
+                    <div class="relative z-10">
+                        <h1 class="text-3xl font-bold mb-2">Welcome back!</h1>
+                        <p class="opacity-90 max-w-lg">Your health journey matters to us.</p>
+                        <button (click)="activeTab = 'book'"
+                            class="mt-6 bg-white text-teal-600 px-6 py-2 rounded-lg font-bold shadow hover:bg-teal-50 transition">Book
+                            Now</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="card flex items-center p-6 cursor-pointer hover:shadow-md transition"
+                        (click)="activeTab = 'rdvs'">
+                        <div
+                            class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xl mr-4">
+                            📅</div>
+                        <div>
+                            <p class="text-sm text-slate-500">ces rendez vous</p>
+                            <p class="text-2xl font-bold text-slate-800">{{ rdvs.length }}</p>
+                        </div>
+                    </div>
+                    <div class="card flex items-center p-6 cursor-pointer hover:shadow-md transition"
+                        (click)="activeTab = 'factures'">
+                        <div
+                            class="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-600 text-xl mr-4">
+                            🧾</div>
+                        <div>
+                            <p class="text-sm text-slate-500">Invoices</p>
+                            <p class="text-2xl font-bold text-slate-800">{{ factures.length }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Book Tab -->
+            <div *ngIf="activeTab === 'book'" class="max-w-2xl mx-auto card animate-fade-in">
+                <h3 class="text-xl font-bold text-slate-800 mb-6">Schedule a Visit</h3>
+                <form [formGroup]="bookingForm" (ngSubmit)="bookRDV()" class="space-y-6">
+                    <div class="input-group">
+                        <label class="input-label">Select Specialist</label>
+                        <select formControlName="doctorId" class="input-field bg-white">
+                            <option value="" disabled>Choose a doctor...</option>
+                            <option *ngFor="let d of doctors" [value]="d.id">Dr. {{ d.fullName }} ({{ d.specialty }})
+                            </option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Preferred Date & Time</label>
+                        <input type="datetime-local" formControlName="date" class="input-field">
+                    </div>
+                    <button type="submit" [disabled]="bookingForm.invalid"
+                        class="w-full btn-primary py-3 text-lg">Confirm Booking</button>
+                </form>
+            </div>
+
+            <!-- RDVs Tab -->
+            <div *ngIf="activeTab === 'rdvs'" class="card animate-fade-in">
+                <h3 class="text-xl font-bold text-slate-800 mb-6">Appointment Records</h3>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-slate-200">
+                        <thead class="bg-slate-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Details
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Doctor
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Status
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">
+                            <tr *ngFor="let r of rdvs" class="hover:bg-slate-50">
+                                <td class="px-6 py-4 text-sm text-slate-900">
+                                    {{ r.date | date:'medium' }} <br> <span class="text-xs text-slate-500">Ref: #{{ r.id
+                                        }}</span>
+                                </td>
+                                <td class="px-6 py-4 text-sm text-slate-600">Dr. ID #{{ r.doctorId }}</td>
+                                <td class="px-6 py-4">
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Confirmed</span>
+                                </td>
+                            </tr>
+                            <tr *ngIf="rdvs.length === 0">
+                                <td colspan="3" class="px-6 py-8 text-center text-slate-500">No appointments found.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Factures Tab -->
+            <div *ngIf="activeTab === 'factures'" class="card animate-fade-in">
+                <h3 class="text-xl font-bold text-slate-800 mb-6">Payment History</h3>
+                <div class="space-y-4">
+                    <div *ngFor="let f of factures"
+                        class="flex items-center justify-between p-4 border border-slate-200 rounded-lg">
+                        <div>
+                            <p class="font-bold text-slate-800">Invoice #{{ f.id }}</p>
+                            <p class="text-sm text-slate-500">Amount: <span class="text-slate-900 font-bold">{{
+                                    f.montant }} €</span></p>
+                        </div>
+                        <div>
+                            <button *ngIf="f.status !== 'PAYEE'" (click)="payBill(f.id)"
+                                class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold shadow hover:bg-blue-700 transition">
+                                Pay Now
+                            </button>
+                            <span *ngIf="f.status === 'PAYEE'"
+                                class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold border border-green-200">
+                                PAID
+                            </span>
+                        </div>
+                    </div>
+                    <div *ngIf="factures.length === 0" class="text-center text-slate-500 py-6">No invoices found.</div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</div>
