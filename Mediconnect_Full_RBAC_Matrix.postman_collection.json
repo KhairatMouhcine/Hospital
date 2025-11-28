@@ -1,0 +1,593 @@
+{
+    "info": {
+        "_postman_id": "mediconnect-full-rbac-id",
+        "name": "Mediconnect Full RBAC Matrix",
+        "description": "Collection COMPLÈTE testant la matrice de sécurité pour ADMIN, DOCTOR, et PATIENT.\n\n### Matrice Testée :\n\n| Endpoint | Method | ADMIN | DOCTOR | PATIENT |\n| :--- | :--- | :---: | :---: | :---: |\n| /auth/ | ALL | ✅ | ✅ | ✅ |\n| /api/patients | GET | ✅ | ✅ | ❌ |\n| /api/patients | POST | ✅ | ❌ | ❌ |\n| /api/patients/{id} | PUT/DEL | ✅ | ❌ | ❌ |\n| /api/patients/me | GET | ❌ | ❌ | ✅ |\n| /api/doctors | GET | ✅ | ✅ | ✅ |\n| /api/doctors | POST/PUT/DEL | ✅ | ❌ | ❌ |\n| /api/rendezvous | POST | ✅ | ✅ | ✅ |\n| /api/rendezvous/me | GET | ✅ | ✅ | ✅ |\n| /api/factures | GET | ✅ | ❌ | ❌ |\n| /api/factures | POST | ✅ | ❌ | ❌ |\n| /api/factures/{id}/payer | PUT | ✅ | ❌ | ✅ |",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "0. SETUP (Run First)",
+            "item": [
+                {
+                    "name": "1. Register Admin",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"fullName\":\"Admin\",\"email\":\"admin.full@test.com\",\"password\":\"password123\",\"role\":\"ADMIN\"}"
+                        },
+                        "url": "http://localhost:8080/auth/register"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "2. Login Admin",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var jsonData = pm.response.json();",
+                                    "pm.collectionVariables.set(\"admin_token\", jsonData.token);"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"email\":\"admin.full@test.com\",\"password\":\"password123\"}"
+                        },
+                        "url": "http://localhost:8080/auth/login"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "3. Register Doctor",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"fullName\":\"Docteur\",\"email\":\"doc.full@test.com\",\"password\":\"password123\",\"role\":\"DOCTOR\"}"
+                        },
+                        "url": "http://localhost:8080/auth/register"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "4. Login Doctor",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var jsonData = pm.response.json();",
+                                    "pm.collectionVariables.set(\"doctor_token\", jsonData.token);"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"email\":\"doc.full@test.com\",\"password\":\"password123\"}"
+                        },
+                        "url": "http://localhost:8080/auth/login"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "5. Register Patient",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"fullName\":\"Patient\",\"email\":\"pat.full@test.com\",\"password\":\"password123\",\"role\":\"PATIENT\"}"
+                        },
+                        "url": "http://localhost:8080/auth/register"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "6. Login Patient",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var jsonData = pm.response.json();",
+                                    "pm.collectionVariables.set(\"patient_token\", jsonData.token);"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"email\":\"pat.full@test.com\",\"password\":\"password123\"}"
+                        },
+                        "url": "http://localhost:8080/auth/login"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "7. Init Data (Create Patient Profile as Admin)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"fullName\":\"Patient\",\"email\":\"pat.full@test.com\",\"phone\":\"000\",\"birthDate\":\"1990-01-01\",\"gender\":\"M\",\"address\":\"House\"}"
+                        },
+                        "url": "http://localhost:8080/api/patients"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "8. Init Data (Create Doctor Profile as Admin)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"fullName\":\"Docteur\",\"email\":\"doc.full@test.com\",\"phone\":\"000\",\"specialty\":\"General\",\"office\":\"A1\",\"biography\":\"Bio\"}"
+                        },
+                        "url": "http://localhost:8080/api/doctors"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "ROLE: ADMIN (Tout ✅ sauf /me)",
+            "item": [
+                {
+                    "name": "GET /api/patients (200)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "url": "http://localhost:8080/api/patients"
+                    }
+                },
+                {
+                    "name": "POST /api/patients (200)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"fullName\":\"P\",\"email\":\"p.admin@test.com\",\"phone\":\"00\",\"birthDate\":\"2000-01-01\",\"gender\":\"M\",\"address\":\"A\"}"
+                        },
+                        "url": "http://localhost:8080/api/patients"
+                    }
+                },
+                {
+                    "name": "GET /api/doctors (200)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "url": "http://localhost:8080/api/doctors"
+                    }
+                },
+                {
+                    "name": "POST /api/doctors (200)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"fullName\":\"D\",\"email\":\"d.admin@test.com\",\"phone\":\"00\",\"specialty\":\"S\",\"office\":\"O\",\"biography\":\"B\"}"
+                        },
+                        "url": "http://localhost:8080/api/doctors"
+                    }
+                },
+                {
+                    "name": "POST /api/factures (200)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"rendezVousId\":1,\"typeConsultation\":\"GENERALISTE\",\"assurance\":true}"
+                        },
+                        "url": "http://localhost:8080/api/factures"
+                    }
+                },
+                {
+                    "name": "GET /api/patients/me (403/404 - Not for Admin)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "url": "http://localhost:8080/api/patients/me"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "ROLE: DOCTOR (Lecture partielle)",
+            "item": [
+                {
+                    "name": "GET /api/patients (200 ✅)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{doctor_token}}"
+                            }
+                        ],
+                        "url": "http://localhost:8080/api/patients"
+                    }
+                },
+                {
+                    "name": "POST /api/patients (403 ❌)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{doctor_token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{}"
+                        },
+                        "url": "http://localhost:8080/api/patients"
+                    }
+                },
+                {
+                    "name": "PUT /api/patients/1 (403 ❌)",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{doctor_token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{}"
+                        },
+                        "url": "http://localhost:8080/api/patients/1"
+                    }
+                },
+                {
+                    "name": "GET /api/patients/me (403 ❌)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{doctor_token}}"
+                            }
+                        ],
+                        "url": "http://localhost:8080/api/patients/me"
+                    }
+                },
+                {
+                    "name": "GET /api/doctors (200 ✅)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{doctor_token}}"
+                            }
+                        ],
+                        "url": "http://localhost:8080/api/doctors"
+                    }
+                },
+                {
+                    "name": "POST /api/doctors (403 ❌)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{doctor_token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{}"
+                        },
+                        "url": "http://localhost:8080/api/doctors"
+                    }
+                },
+                {
+                    "name": "POST /api/rendezvous (200 ✅)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{doctor_token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"patientId\":1,\"doctorId\":1,\"date\":\"2025-01-01T12:00:00\"}"
+                        },
+                        "url": "http://localhost:8080/api/rendezvous"
+                    }
+                },
+                {
+                    "name": "POST /api/factures (403 ❌)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{doctor_token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{}"
+                        },
+                        "url": "http://localhost:8080/api/factures"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "ROLE: PATIENT (Restreint)",
+            "item": [
+                {
+                    "name": "GET /api/patients (403 ❌)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{patient_token}}"
+                            }
+                        ],
+                        "url": "http://localhost:8080/api/patients"
+                    }
+                },
+                {
+                    "name": "POST /api/patients (403 ❌)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{patient_token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{}"
+                        },
+                        "url": "http://localhost:8080/api/patients"
+                    }
+                },
+                {
+                    "name": "GET /api/patients/me (200 ✅)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{patient_token}}"
+                            }
+                        ],
+                        "url": "http://localhost:8080/api/patients/me"
+                    }
+                },
+                {
+                    "name": "GET /api/doctors (200 ✅)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{patient_token}}"
+                            }
+                        ],
+                        "url": "http://localhost:8080/api/doctors"
+                    }
+                },
+                {
+                    "name": "POST /api/doctors (403 ❌)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{patient_token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{}"
+                        },
+                        "url": "http://localhost:8080/api/doctors"
+                    }
+                },
+                {
+                    "name": "POST /api/factures (403 ❌)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{patient_token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{}"
+                        },
+                        "url": "http://localhost:8080/api/factures"
+                    }
+                },
+                {
+                    "name": "PUT /api/factures/1/payer (200 ✅)",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{patient_token}}"
+                            }
+                        ],
+                        "url": "http://localhost:8080/api/factures/1/payer"
+                    }
+                }
+            ]
+        }
+    ],
+    "variable": [
+        {
+            "key": "admin_token",
+            "value": ""
+        },
+        {
+            "key": "doctor_token",
+            "value": ""
+        },
+        {
+            "key": "patient_token",
+            "value": ""
+        }
+    ]
+}
